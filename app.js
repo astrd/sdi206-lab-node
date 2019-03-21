@@ -9,6 +9,9 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+var gestorBD = require("./modules/gestorBD.js");
+gestorBD.init(app,mongo)
+
 app.use(express.static('public'));
 
 // Variables
@@ -17,9 +20,8 @@ app.set('db','mongodb://admin:admin@cluster0-shard-00-00-4h3lp.mongodb.net:27017
 
 
 //Rutas/controladores por lógica
-//Rutas/controladores por lógica
-require("./routes/rusuarios.js")(app, swig);
-require("./routes/rcanciones.js")(app, swig,mongo);
+require("./routes/rusuarios.js")(app, swig, gestorBD);
+require("./routes/rcanciones.js")(app, swig, gestorBD);
 // lanzar el servid
 app.listen(app.get('port'), 8081, function() {
     console.log("Servidor activo");

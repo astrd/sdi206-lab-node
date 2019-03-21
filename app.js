@@ -1,6 +1,8 @@
 // Módulos
 var express = require('express');
 var app = express();
+var swig = require('swig');
+
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -12,6 +14,9 @@ app.use(express.static('public'));
 app.set('port', 8081);
 
 //Rutas/controladores por lógica
+//Rutas/controladores por lógica
+require("./routes/rusuarios.js")(app, swig);
+require("./routes/rcanciones.js")(app, swig);
 require("./routes/rusuarios.js")(app); // (app, param1, param2, etc.)
 require("./routes/rcanciones.js")(app); // (app, param1, param2, etc.)
 // lanzar el servid

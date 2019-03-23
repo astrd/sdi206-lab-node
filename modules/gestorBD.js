@@ -11,7 +11,7 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 var collection = db.collection('canciones');
-                collection.insert(cancion, function(err, result) {
+                collection.insertOne(cancion, function(err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {

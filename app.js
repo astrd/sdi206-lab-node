@@ -1,7 +1,10 @@
 // Módulos
-var mongo = require('mongodb');
+
 var express = require('express');
 var app = express();
+var fileUpload = require('express-fileupload');
+app.use(fileUpload());
+var mongo = require('mongodb');
 var swig = require('swig');
 
 

@@ -2,6 +2,13 @@
 
 var express = require('express');
 var app = express();
+var expressSession = require('express-session');
+app.use(expressSession({
+    secret: 'abcdefg',
+    resave: true,
+    saveUninitialized: true
+}));
+var crypto = require('crypto');
 var fileUpload = require('express-fileupload');
 app.use(fileUpload());
 var mongo = require('mongodb');
@@ -20,7 +27,8 @@ app.use(express.static('public'));
 // Variables
 app.set('port', 8081);
 app.set('db','mongodb://admin:admin@cluster0-shard-00-00-4h3lp.mongodb.net:27017,cluster0-shard-00-01-4h3lp.mongodb.net:27017,cluster0-shard-00-02-4h3lp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true');
-
+app.set('clave','abcdefg');
+app.set('crypto',crypto);
 
 //Rutas/controladores por lógica
 require("./routes/rusuarios.js")(app, swig, gestorBD);

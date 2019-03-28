@@ -45,12 +45,25 @@ routerAudios.use(function(req, res, next) {
     console.log("routerAudios");
     var path = require('path');
     var idCancion = path.basename(req.originalUrl, '.mp3');
+
     gestorBD.obtenerCanciones(
-        {"_id" : mongo.ObjectID(idCancion) }, function (canciones) {
-            if(req.session.usuario  == req.session.usuario ){
+        { _id : mongo.ObjectID(idCancion) }, function (canciones) {
+
+            if( canciones[0].autor == req.session.usuario ){
                 next();
             } else {
-                res.redirect("/tienda");
+                var criterio = {
+                    usuario : req.session.usuario,
+                    cancionId : mongo.ObjectID(idCancion)
+                };
+
+                gestorBD.obtenerCompras(criterio ,function(compras){
+                    if (compras != null && compras.length > 0 ){
+                        next();
+                    } else {
+                        res.redirect("/tienda");
+                    }
+                });
             }
         })
 });
@@ -79,6 +92,9 @@ routerUsuarioAutor.use(function(req, res, next) {
 //Aplicar routerUsuarioAutor
 app.use("/cancion/modificar",routerUsuarioAutor);
 app.use("/cancion/eliminar",routerUsuarioAutor);
+app.use("/cancion/comprar",routerUsuarioSession);
+app.use("/compras",routerUsuarioSession);
+
 
 // Variables
 app.set('port', 8081);

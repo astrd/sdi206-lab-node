@@ -90,6 +90,10 @@ app.set('crypto',crypto);
 require("./routes/rusuarios.js")(app, swig, gestorBD);
 require("./routes/rcanciones.js")(app, swig, gestorBD);
 // lanzar el servid
+
+app.get('/', function (req, res) {
+    res.redirect('/tienda');
+})
 app.listen(app.get('port'), 8081, function() {
     console.log("Servidor activo");
 });

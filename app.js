@@ -46,7 +46,7 @@ routerAudios.use(function(req, res, next) {
     var path = require('path');
     var idCancion = path.basename(req.originalUrl, '.mp3');
     gestorBD.obtenerCanciones(
-        {id : mongo.ObjectID(idCancion) }, function (canciones) {
+        {"_id" : mongo.ObjectID(idCancion) }, function (canciones) {
             if(req.session.usuario  == req.session.usuario ){
                 next();
             } else {
@@ -58,6 +58,27 @@ routerAudios.use(function(req, res, next) {
 app.use("/audios/",routerAudios);
 app.use(express.static('public'));
 
+//routerUsuarioAutor
+var routerUsuarioAutor = express.Router();
+routerUsuarioAutor.use(function(req, res, next) {
+    console.log("routerUsuarioAutor");
+    var path = require('path');
+    var id = path.basename(req.originalUrl);
+// Cuidado porque req.params no funciona
+// en el router si los params van en la URL.
+    gestorBD.obtenerCanciones(
+        {_id: mongo.ObjectID(id) }, function (canciones) {
+            console.log(canciones[0]);
+            if(canciones[0].autor == req.session.usuario ){
+                next();
+            } else {
+                res.redirect("/tienda");
+            }
+        })
+});
+//Aplicar routerUsuarioAutor
+app.use("/cancion/modificar",routerUsuarioAutor);
+app.use("/cancion/eliminar",routerUsuarioAutor);
 
 // Variables
 app.set('port', 8081);

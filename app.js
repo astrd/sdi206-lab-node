@@ -4,6 +4,8 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var https = require('https');
+var rest = require('request');
+app.set('rest',rest);
 
 var expressSession = require('express-session');
 app.use(expressSession({

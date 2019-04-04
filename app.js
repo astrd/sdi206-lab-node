@@ -1,5 +1,5 @@
 // Módulos
-
+var jwt = require('jsonwebtoken');
 var express = require('express');
 var app = express();
 var fs = require('fs');
@@ -16,7 +16,8 @@ var fileUpload = require('express-fileupload');
 app.use(fileUpload());
 var mongo = require('mongodb');
 var swig = require('swig');
-
+var jwt = require('jsonwebtoken');
+app.set('jwt',jwt);
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -119,6 +120,40 @@ app.get('/', function (req, res) {
     res.redirect('/tienda');
 });
 
+// routerUsuarioToken
+var routerUsuarioToken = express.Router();
+routerUsuarioToken.use(function(req, res, next) {
+    // obtener el token, vía headers (opcionalmente GET y/o POST).
+    var token = req.headers['token'] || req.body.token || req.query.token;
+    if (token != null) {
+        // verificar el token
+        jwt.verify(token, 'secreto', function(err, infoToken) {
+            if (err || (Date.now()/1000 - infoToken.tiempo) > 240 ){
+                res.status(403); // Forbidden
+                res.json({
+                    acceso : false,
+                    error: 'Token invalido o caducado'
+                });
+                // También podríamos comprobar que intoToken.usuario existe
+                return;
+
+            } else {
+                // dejamos correr la petición
+                res.usuario = infoToken.usuario;
+                next();
+            }
+        });
+
+    } else {
+        res.status(403); // Forbidden
+        res.json({
+            acceso : false,
+            mensaje: 'No hay Token'
+        });
+    }
+});
+// Aplicar routerUsuarioToken
+app.use('/api/cancion', routerUsuarioToken);
 
 app.use( function (err, req, res, next ) {
     console.log("Error producido: " + err); //we log the error in our db
